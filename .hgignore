@@ -1,0 +1,7 @@
+bin$
+obj$
+\.suo$
+\.user$
+\.DS_Store
+\_ReSharper
+\.resharper
