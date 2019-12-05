@@ -26,10 +26,9 @@ namespace PMCS
             string outputFile = null;
             foreach(string arg in args)
             {
-                if(arg.StartsWith("/"))
+                if (arg.StartsWith("/o:"))
                 {
-                    if(arg.StartsWith("/o:"))
-                        outputFile = arg.Substring(3);
+                    outputFile = arg.Substring(3);
                 }
                 else
                 {
