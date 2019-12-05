@@ -336,7 +336,6 @@ namespace PMCS.Classes
                 fField.FType = type;
                 fField.FAccessControlQualifier = accessControlQualifier;
                 fField.VarType = 1;
-                // BUG: ArgumentOutOfRangeException when statusOfClass.Count is 0
                 inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].cCFields.Add(fField);
                 inputSource.ElementID++;
             }
