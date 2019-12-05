@@ -24,11 +24,24 @@ namespace PMCS
         {
             string sourcePath = null;
             string outputFile = null;
-            foreach(string arg in args)
+            string whitelistRegexp = null;
+            string blacklistRegexp = null;
+            foreach (string arg in args)
             {
-                if (arg.StartsWith("/o:"))
-                {
-                    outputFile = arg.Substring(3);
+                if (arg.StartsWith("/"))
+                { 
+                    if (arg.StartsWith("/o:"))
+                    {
+                        outputFile = arg.Substring(3);
+                    }
+                    if (arg.StartsWith("/w:"))
+                    {
+                        whitelistRegexp = arg.Substring(3);
+                    }
+                    if (arg.StartsWith("/b:"))
+                    {
+                        blacklistRegexp = arg.Substring(3);
+                    }
                 }
                 else
                 {
@@ -37,6 +50,8 @@ namespace PMCS
             }
 
             InputSource inputSource = new InputSource();
+            inputSource.WhitelistRegexp = whitelistRegexp;
+            inputSource.BlacklistRegexp = blacklistRegexp;
             inputSource.ElementID = 0;
             inputSource.ListOfNamespaces.Clear();
             

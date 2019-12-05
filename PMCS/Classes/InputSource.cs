@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PMCS.Classes
 {
@@ -55,6 +56,9 @@ namespace PMCS.Classes
                 return sourcePath;
             }
         }
+
+        public string WhitelistRegexp { get; internal set; }
+        public string BlacklistRegexp { get; internal set; }
 
         public int GetParentClassID(string className, int indexOfNamespace, int indexOfClass)
         {
@@ -375,12 +379,19 @@ namespace PMCS.Classes
             }
         }
 
-        private static bool IsSourceFile(string path)
+        private bool IsSourceFile(string path)
         {
             string fileName = Path.GetFileName(path);
-            return fileName.EndsWith(".cs")
+            bool isValidSourceFile = fileName.EndsWith(".cs")
                 && !fileName.StartsWith("._")
                 && !fileName.Equals("AssemblyInfo.cs");
+            if(!isValidSourceFile)
+            {
+                return false;
+            }
+            bool isWhitelisted = WhitelistRegexp == null || Regex.IsMatch(path, WhitelistRegexp, RegexOptions.IgnoreCase);
+            bool isBlacklisted = BlacklistRegexp != null && Regex.IsMatch(path, BlacklistRegexp, RegexOptions.IgnoreCase);
+            return isWhitelisted && !isBlacklisted;
         }
 
         public void ReadProject(string path, Action<string> progressAction)
