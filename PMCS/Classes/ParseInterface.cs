@@ -55,7 +55,7 @@ namespace PMCS.Classes
                 }
             }
             fmMethod.MStub = false;
-            parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods.Add(fmMethod);
+            parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods.Add(fmMethod);
             parser.inputSource.ElementID++;
             parser.parseLine.Remove(0, lastIndex + 1);
 

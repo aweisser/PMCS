@@ -17,7 +17,7 @@ namespace PMCS.Classes
         }
         public bool FindParameter(string s, int ind)
         {
-            fMethod = parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind];
+            fMethod = parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind];
             for (int i = 0; i < fMethod.MVariable.Count; i++)
             {
                 if (s.CompareTo(fMethod.MVariable[i].LName) == 0)
@@ -40,7 +40,7 @@ namespace PMCS.Classes
         }
         public void ProcessString(string s)
         {
-            int ind = parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods.Count - 1;
+            int ind = parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods.Count - 1;
             int index;
             s = s.Trim();
             //process invokation
@@ -69,8 +69,8 @@ namespace PMCS.Classes
                         fi.FParent = "";
                     }
                 }
-                fi.FInvokedBy = parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MId;
-                parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MInvocation.Add(fi);
+                fi.FInvokedBy = parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MId;
+                parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MInvocation.Add(fi);
                 parser.inputSource.ElementID++;
             }
             else
@@ -88,9 +88,9 @@ namespace PMCS.Classes
                     lv.LId = parser.inputSource.ElementID;
                     lv.LName = e[e.Length - 1];
                     //int ind = parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods.Count - 1;
-                    lv.LBelongsTo = parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MId;
+                    lv.LBelongsTo = parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MId;
                     lv.LStub = false;
-                    parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MVariable.Add(lv);
+                    parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MVariable.Add(lv);
                     parser.inputSource.ElementID++;
                 }
                 else
@@ -102,9 +102,9 @@ namespace PMCS.Classes
                         FAccess fa = new FAccess();
                         fa.AID = parser.inputSource.ElementID;
                         fa.AName = facc[0];
-                        fa.ABelongsTo = parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CId;
-                        fa.AAccessBy = parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MId;
-                        parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MAccess.Add(fa);
+                        fa.ABelongsTo = parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CId;
+                        fa.AAccessBy = parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MId;
+                        parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[ind].MAccess.Add(fa);
                         parser.inputSource.ElementID++;
                     }
                 }
@@ -231,7 +231,7 @@ namespace PMCS.Classes
             {
                 if (s.CompareTo(fClass.CMethods[i].MName) == 0)
                 {
-                    return parser.inputSource.ListOfNamespaces[parser.statusOfNamepsace[parser.statusOfNamepsace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[i].MId;
+                    return parser.inputSource.ListOfNamespaces[parser.statusOfNamespace[parser.statusOfNamespace.Count - 1]].NClasses[parser.statusOfClass[parser.statusOfClass.Count - 1]].CMethods[i].MId;
                 }
             }
             return 0;

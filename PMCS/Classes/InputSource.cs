@@ -360,7 +360,7 @@ namespace PMCS.Classes
             string[] fileEntries = Directory.GetFiles(SourcePath);
             foreach (string fileName in fileEntries)
             {
-                if ((fileName.EndsWith(".cs")) && (!Path.GetFileName(fileName).StartsWith("._")))
+                if (IsSourceFile(fileName))
                 {
                     progressAction(fileName);
                     p.ReadFromFile(fileName);
@@ -374,6 +374,15 @@ namespace PMCS.Classes
                 ReadFilesOfProject(subdir, progressAction);
             }
         }
+
+        private static bool IsSourceFile(string path)
+        {
+            string fileName = Path.GetFileName(path);
+            return fileName.EndsWith(".cs")
+                && !fileName.StartsWith("._")
+                && !fileName.Equals("AssemblyInfo.cs");
+        }
+
         public void ReadProject(string path, Action<string> progressAction)
         {
             p = new Parser(this); 
@@ -394,7 +403,7 @@ namespace PMCS.Classes
             string[] fileEntries = Directory.GetFiles(path);
             foreach (string fileName in fileEntries)
             {
-                if (fileName.EndsWith(".cs") == true)
+                if (IsSourceFile(fileName))
                 {
                     FileCount++;
                 }
