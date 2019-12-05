@@ -85,6 +85,13 @@ namespace PMCS.Classes
             }
             parseLine.Remove(0, lastIndex + 1);
         }
+
+        public void ParseExtern()
+        {
+            lastIndex = parseLine.ToString().IndexOf(";");
+            parseLine.Remove(0, lastIndex + 1);
+        }
+
         public void ParseUsing()
         {
             lastIndex = parseLine.ToString().IndexOf(";");
@@ -630,6 +637,7 @@ namespace PMCS.Classes
         {
             while (parseLine.ToString().Trim() != "")
             {
+                int indexOfExtern = indexOfKeyword(parseLine.ToString().IndexOf("extern"), "extern");
                 int indexOfUsing = indexOfKeyword(parseLine.ToString().IndexOf("using"), "using");
                 int indexOfNamespace = indexOfKeyword(parseLine.ToString().IndexOf("namespace"), "namespace");
                 int indexOfClass = indexOfClassKeyword(parseLine.ToString().IndexOf("class"), "class");
@@ -653,114 +661,121 @@ namespace PMCS.Classes
                 int indexOfVoid = parseLine.ToString().IndexOf("{");
                 int indexOfField = parseLine.ToString().IndexOf(";");
                 int indexOfClose = parseLine.ToString().IndexOf("}");
-                startIndex = Min(indexOfUsing, indexOfNamespace, indexOfClass, indexOfInterface, indexOfStuct,
+                startIndex = Min(indexOfExtern, indexOfUsing, indexOfNamespace, indexOfClass, indexOfInterface, indexOfStuct,
                                  indexOfEnum, indexOfDelegate, indexOfVoid, indexOfField, indexOfClose, indexOfAttribut);
 
-                if (startIndex == indexOfUsing)
+                if (startIndex == indexOfExtern)
                 {
-                    ParseUsing();
+                    ParseExtern();
                 }
                 else
                 {
-                    if (startIndex == indexOfNamespace)
+                    if (startIndex == indexOfUsing)
                     {
-                        ParseNamespace();
+                        ParseUsing();
                     }
                     else
                     {
-                        if (startIndex == indexOfClass)
+                        if (startIndex == indexOfNamespace)
                         {
-                            ParseClass();
+                            ParseNamespace();
                         }
                         else
                         {
-                            if (startIndex == indexOfInterface)
+                            if (startIndex == indexOfClass)
                             {
-                                ParseInterface();
+                                ParseClass();
                             }
                             else
                             {
-                                if (startIndex == indexOfStuct)
+                                if (startIndex == indexOfInterface)
                                 {
-                                    ParseStruct();
+                                    ParseInterface();
                                 }
                                 else
                                 {
-                                    if (startIndex == indexOfEnum)
+                                    if (startIndex == indexOfStuct)
                                     {
-                                        ParseEnum();
+                                        ParseStruct();
                                     }
                                     else
                                     {
-                                        if (startIndex == indexOfDelegate)
+                                        if (startIndex == indexOfEnum)
                                         {
-                                            ParseDelegate();
+                                            ParseEnum();
                                         }
                                         else
                                         {
-                                            if (startIndex == indexOfVoid)
+                                            if (startIndex == indexOfDelegate)
                                             {
-                                                int method = parseLine.ToString().IndexOf(")");
-                                                if ((method > -1) && (method < indexOfVoid))
-                                                {
-                                                    ParseMethod(method, startIndex, false);
-                                                }
-                                                else
-                                                {
-                                                    ParseProperty();
-                                                }
+                                                ParseDelegate();
                                             }
                                             else
                                             {
-                                                if (startIndex == indexOfField)
+                                                if (startIndex == indexOfVoid)
                                                 {
-
-                                                    int ab = indexOfKeyword(parseLine.ToString().IndexOf("abstract"), "abstract");
-                                                    int ex = indexOfKeyword(parseLine.ToString().IndexOf("extern"), "extern");
-                                                    int m = Min(ab, ex);
-                                                    if ((m > 0) && (m < indexOfField))
+                                                    int method = parseLine.ToString().IndexOf(")");
+                                                    if ((method > -1) && (method < indexOfVoid))
                                                     {
-                                                        int method = parseLine.ToString().IndexOf(")");
-                                                        if ((method > -1) && (method < indexOfField))
+                                                        ParseMethod(method, startIndex, false);
+                                                    }
+                                                    else
+                                                    {
+                                                        ParseProperty();
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (startIndex == indexOfField)
+                                                    {
+
+                                                        int ab = indexOfKeyword(parseLine.ToString().IndexOf("abstract"), "abstract");
+                                                        int ex = indexOfKeyword(parseLine.ToString().IndexOf("extern"), "extern");
+                                                        int m = Min(ab, ex);
+                                                        if ((m > 0) && (m < indexOfField))
                                                         {
-                                                            ParseMethod(method, startIndex, true);
+                                                            int method = parseLine.ToString().IndexOf(")");
+                                                            if ((method > -1) && (method < indexOfField))
+                                                            {
+                                                                ParseMethod(method, startIndex, true);
+                                                            }
+                                                            else
+                                                            {
+                                                                ParseField(startIndex);
+                                                            }
+
                                                         }
                                                         else
                                                         {
                                                             ParseField(startIndex);
                                                         }
-
                                                     }
                                                     else
                                                     {
-                                                        ParseField(startIndex);
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    if (startIndex == indexOfClose)
-                                                    {
-                                                        parseLine.Remove(0, startIndex + 1);
-                                                        if (statusOfClass.Count >= statusOfNamespace.Count)
+                                                        if (startIndex == indexOfClose)
                                                         {
-                                                            if (statusOfClass.Count != 0)
+                                                            parseLine.Remove(0, startIndex + 1);
+                                                            if (statusOfClass.Count >= statusOfNamespace.Count)
                                                             {
-                                                                statusOfClass.RemoveAt(statusOfClass.Count - 1);
+                                                                if (statusOfClass.Count != 0)
+                                                                {
+                                                                    statusOfClass.RemoveAt(statusOfClass.Count - 1);
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (statusOfNamespace.Count != 0)
+                                                                {
+                                                                    statusOfNamespace.RemoveAt(statusOfNamespace.Count - 1);
+                                                                }
                                                             }
                                                         }
                                                         else
                                                         {
-                                                            if (statusOfNamespace.Count != 0)
+                                                            if (startIndex == indexOfAttribut)
                                                             {
-                                                                statusOfNamespace.RemoveAt(statusOfNamespace.Count - 1);
+                                                                ParseAttribut();
                                                             }
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        if (startIndex == indexOfAttribut)
-                                                        {
-                                                            ParseAttribut();
                                                         }
                                                     }
                                                 }
