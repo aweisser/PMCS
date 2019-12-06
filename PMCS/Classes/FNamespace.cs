@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMCS.Classes
 {
-    public class FNamespace
+    class FNamespace
     {
         protected int nId;
         protected string nName;

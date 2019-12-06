@@ -5,14 +5,14 @@ using System.IO;
 
 namespace PMCS.Classes
 {
-    public class Parser
+    class Parser
     {
         private List<FLibrary> listOfLibrary = new List<FLibrary>();
         private List<FClass> listOfClasses = new List<FClass>();
         private StreamReader SR;
         public InputSource inputSource = new InputSource();
         public CachingStringBuilder parseLine = new CachingStringBuilder();
-        public List<int> statusOfNamespace = new List<int>();
+        public List<int> statusOfNamepsace = new List<int>();
         public List<int> statusOfClass = new List<int>();
         public int startIndex;
         public int lastIndex;
@@ -38,22 +38,11 @@ namespace PMCS.Classes
         public Parser()
         {
         }
-
-        // Due to a bug (or limitation) a class can not be assigned to a namespace, if it's not the first class declaration in .cs file.
-        // This can cause an ArgumentOutOfRangeException. To prevent this we create an "Empty Namespace".
-        private FNamespace _defaultNamespace;
-
         public Parser(InputSource source)
         {
             inputSource = source;
             inputSource.ElementID = 2;
-            _defaultNamespace = new FNamespace()
-            {
-                NId = inputSource.ElementID++,
-                NName = "UnknownNamespace",
-                NClasses = new List<FClass>(),
-            };
-    }
+        }
         public void ParseNamespace()
         {
             FNamespace fmNamespace = new FNamespace();
@@ -65,10 +54,10 @@ namespace PMCS.Classes
             {
                 fmNamespace.ParnetNamespace = namespaces[namespaces.Length - 2];
             }
-            if (statusOfNamespace.Count > 0)
+            if (statusOfNamepsace.Count > 0)
             {
-                fmNamespace.ParnetNamespace = inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NName;
-                fmNamespace.NName = inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NName + "." + parseLine.ToString().Substring(startIndex + 10, lastIndex - (startIndex + 10)).Trim();
+                fmNamespace.ParnetNamespace = inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NName;
+                fmNamespace.NName = inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NName + "." + parseLine.ToString().Substring(startIndex + 10, lastIndex - (startIndex + 10)).Trim();
         
             }
 
@@ -76,22 +65,15 @@ namespace PMCS.Classes
             if (index == -1)
             {
                 inputSource.ListOfNamespaces.Add(fmNamespace);
-                statusOfNamespace.Add(inputSource.ListOfNamespaces.Count - 1);
+                statusOfNamepsace.Add(inputSource.ListOfNamespaces.Count - 1);
                 inputSource.ElementID++;
             }
             else
             {
-                statusOfNamespace.Add(index);
+                statusOfNamepsace.Add(index);
             }
             parseLine.Remove(0, lastIndex + 1);
         }
-
-        public void ParseExtern()
-        {
-            lastIndex = parseLine.ToString().IndexOf(";");
-            parseLine.Remove(0, lastIndex + 1);
-        }
-
         public void ParseUsing()
         {
             lastIndex = parseLine.ToString().IndexOf(";");
@@ -105,30 +87,17 @@ namespace PMCS.Classes
             }
             parseLine.Remove(0, lastIndex + 1);
         }
-        
         public void ParseClass()
         {
             FClass fclass = new FClass();
             lastIndex = parseLine.ToString().IndexOf("{");
             fclass.CId = inputSource.ElementID;
 
-            // Due to a bug (or limitation) a class can not be assigned to a namespace, if it's not the first class declaration in .cs file.
-            // This can cause an ArgumentOutOfRangeException. To prevent this we create an "Empty Namespace".
-            var nameSpace = _defaultNamespace;
-            int nameSpaceIdx = 0;
-            if (statusOfNamespace.Count > 0)
-            {
-                nameSpaceIdx = statusOfNamespace[statusOfNamespace.Count - 1];
-                nameSpace = inputSource.ListOfNamespaces[nameSpaceIdx];
-            } else
-            {
-                inputSource.ListOfNamespaces.Add(_defaultNamespace);
-                statusOfNamespace.Add(0);
-            }
-
             if (statusOfClass.Count > 0)
             {
-                fclass.ParentClass.Add(nameSpace.NClasses[statusOfClass[statusOfClass.Count - 1]].CName);
+
+                fclass.ParentClass.Add(inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CName);
+
             }
 
             int inherit = parseLine.ToString().IndexOf(":");
@@ -150,21 +119,24 @@ namespace PMCS.Classes
                 fclass.CName = parseLine.ToString().Substring(startIndex + 5, lastIndex - (startIndex + 5)).Trim();
             }
 
-            if ((parseLine.ToString().IndexOf("abstract") > -1) && (parseLine.ToString().IndexOf("abstract") < lastIndex))
+            if ((parseLine.ToString().IndexOf("abstarct") > -1) && (parseLine.ToString().IndexOf("abstract") < lastIndex))
             {
                 fclass.CIsAbstract = true;
             }
             fclass.CIsInterface = false;
             fclass.CIsEnum = false;
             fclass.CIsStruct = false;
+
             fclass.CStub = false;
-            fclass.CBelongsTo = nameSpace.NId;
-            
-            int index = fclass.IndexOf(inputSource.ListOfNamespaces, nameSpaceIdx, fclass);
+
+            fclass.CBelongsTo = inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NId;
+
+
+            int index = fclass.IndexOf(inputSource.ListOfNamespaces, statusOfNamepsace[statusOfNamepsace.Count - 1], fclass);
             if (index == -1)
             {
-                nameSpace.NClasses.Add(fclass);
-                statusOfClass.Add(nameSpace.NClasses.Count - 1);
+                inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses.Add(fclass);
+                statusOfClass.Add(inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses.Count - 1);
                 inputSource.ElementID++;
             }
             else
@@ -182,12 +154,12 @@ namespace PMCS.Classes
             if (statusOfClass.Count > 0)
             {
 
-                fclass.ParentClass.Add(inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CName);
+                fclass.ParentClass.Add(inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CName);
 
             }
             fclass.CName = parseLine.ToString().Substring(startIndex + 7, lastIndex - (startIndex + 7)).Trim();
 
-            if ((parseLine.ToString().IndexOf("abstract") > -1) && (parseLine.ToString().IndexOf("abstract") < lastIndex))
+            if ((parseLine.ToString().IndexOf("abstarct") > -1) && (parseLine.ToString().IndexOf("abstract") < lastIndex))
             {
                 fclass.CIsAbstract = true;
             }
@@ -196,12 +168,12 @@ namespace PMCS.Classes
             fclass.CIsStruct = true;
 
             fclass.CStub = false;
-            fclass.CBelongsTo = inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NId;
+            fclass.CBelongsTo = inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NId;
 
             parseLine.Remove(0, lastIndex + 1);
             inputSource.ElementID++;
-            inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses.Add(fclass);
-            statusOfClass.Add(inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses.Count - 1);
+            inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses.Add(fclass);
+            statusOfClass.Add(inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses.Count - 1);
         }
         public void ParseDelegate()
         {
@@ -238,12 +210,12 @@ namespace PMCS.Classes
             fclass.CIsInterface = true;
             fclass.CId = inputSource.ElementID;
             parseLine.Remove(0, last + 1);
-            int index = fclass.IndexOf(inputSource.ListOfNamespaces, statusOfNamespace[statusOfNamespace.Count - 1], fclass);//kontrollon klasa a eshte ne listen e namspacave e rujtun ma heret dhe e mer indexin e asaj klase
+            int index = fclass.IndexOf(inputSource.ListOfNamespaces, statusOfNamepsace[statusOfNamepsace.Count - 1], fclass);//kontrollon klasa a eshte ne listen e namspacave e rujtun ma heret dhe e mer indexin e asaj klase
             //[para se me e fut kalsen po vesim a eziston edhe nese po po ja marrim indexin poziten e klases edhe qka po parsojm po vendosim ne ate klase
             if (index == -1)
             {
-                inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses.Add(fclass);
-                statusOfClass.Add(inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses.Count - 1);
+                inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses.Add(fclass);
+                statusOfClass.Add(inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses.Count - 1);
                 inputSource.ElementID++;
             }
             else
@@ -336,7 +308,7 @@ namespace PMCS.Classes
                 fField.FType = type;
                 fField.FAccessControlQualifier = accessControlQualifier;
                 fField.VarType = 1;
-                inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].cCFields.Add(fField);
+                inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].cCFields.Add(fField);
                 inputSource.ElementID++;
             }
             
@@ -380,7 +352,7 @@ namespace PMCS.Classes
             }
             String[] attribute = parseLine.ToString().Substring(0, startIndex).Trim().Split(' ');
             fAttribute.AId = inputSource.ElementID;
-            fAttribute.ABelongsTo = inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CId;
+            fAttribute.ABelongsTo = inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CId;
             fAttribute.AHasClassScope = false;
             fAttribute.AStub = false;
 
@@ -409,7 +381,7 @@ namespace PMCS.Classes
                 }
             }
 
-            inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CAttributes.Add(fAttribute);
+            inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CAttributes.Add(fAttribute);
             inputSource.ElementID++;
             //parseLine.Remove(0, lastIndexOfVoid());
             lastIndexOfVoid();
@@ -508,7 +480,7 @@ namespace PMCS.Classes
             String[] method = parseLine.ToString().Substring(0, lastIndex).Trim().Split(' ');
 
             fMethod.MId = inputSource.ElementID;
-            fMethod.MBelongsTo = inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CId;
+            fMethod.MBelongsTo = inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CId;
 
             fMethod.MHasClassScope = false;
             fMethod.MKind = "";//abstrakt
@@ -539,7 +511,7 @@ namespace PMCS.Classes
             }
 
             fMethod.MSignature = fMethod.MName + parseLine.ToString().Substring(lastIndex, index + 1 - lastIndex).Trim();
-            inputSource.ListOfNamespaces[statusOfNamespace[statusOfNamespace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CMethods.Add(fMethod);
+            inputSource.ListOfNamespaces[statusOfNamepsace[statusOfNamepsace.Count - 1]].NClasses[statusOfClass[statusOfClass.Count - 1]].CMethods.Add(fMethod);
             inputSource.ElementID++;
 
 
@@ -636,7 +608,6 @@ namespace PMCS.Classes
         {
             while (parseLine.ToString().Trim() != "")
             {
-                int indexOfExtern = indexOfKeyword(parseLine.ToString().IndexOf("extern"), "extern");
                 int indexOfUsing = indexOfKeyword(parseLine.ToString().IndexOf("using"), "using");
                 int indexOfNamespace = indexOfKeyword(parseLine.ToString().IndexOf("namespace"), "namespace");
                 int indexOfClass = indexOfClassKeyword(parseLine.ToString().IndexOf("class"), "class");
@@ -660,121 +631,114 @@ namespace PMCS.Classes
                 int indexOfVoid = parseLine.ToString().IndexOf("{");
                 int indexOfField = parseLine.ToString().IndexOf(";");
                 int indexOfClose = parseLine.ToString().IndexOf("}");
-                startIndex = Min(indexOfExtern, indexOfUsing, indexOfNamespace, indexOfClass, indexOfInterface, indexOfStuct,
+                startIndex = Min(indexOfUsing, indexOfNamespace, indexOfClass, indexOfInterface, indexOfStuct,
                                  indexOfEnum, indexOfDelegate, indexOfVoid, indexOfField, indexOfClose, indexOfAttribut);
 
-                if (startIndex == indexOfExtern)
+                if (startIndex == indexOfUsing)
                 {
-                    ParseExtern();
+                    ParseUsing();
                 }
                 else
                 {
-                    if (startIndex == indexOfUsing)
+                    if (startIndex == indexOfNamespace)
                     {
-                        ParseUsing();
+                        ParseNamespace();
                     }
                     else
                     {
-                        if (startIndex == indexOfNamespace)
+                        if (startIndex == indexOfClass)
                         {
-                            ParseNamespace();
+                            ParseClass();
                         }
                         else
                         {
-                            if (startIndex == indexOfClass)
+                            if (startIndex == indexOfInterface)
                             {
-                                ParseClass();
+                                ParseInterface();
                             }
                             else
                             {
-                                if (startIndex == indexOfInterface)
+                                if (startIndex == indexOfStuct)
                                 {
-                                    ParseInterface();
+                                    ParseStruct();
                                 }
                                 else
                                 {
-                                    if (startIndex == indexOfStuct)
+                                    if (startIndex == indexOfEnum)
                                     {
-                                        ParseStruct();
+                                        ParseEnum();
                                     }
                                     else
                                     {
-                                        if (startIndex == indexOfEnum)
+                                        if (startIndex == indexOfDelegate)
                                         {
-                                            ParseEnum();
+                                            ParseDelegate();
                                         }
                                         else
                                         {
-                                            if (startIndex == indexOfDelegate)
+                                            if (startIndex == indexOfVoid)
                                             {
-                                                ParseDelegate();
-                                            }
-                                            else
-                                            {
-                                                if (startIndex == indexOfVoid)
+                                                int method = parseLine.ToString().IndexOf(")");
+                                                if ((method > -1) && (method < indexOfVoid))
                                                 {
-                                                    int method = parseLine.ToString().IndexOf(")");
-                                                    if ((method > -1) && (method < indexOfVoid))
-                                                    {
-                                                        ParseMethod(method, startIndex, false);
-                                                    }
-                                                    else
-                                                    {
-                                                        ParseProperty();
-                                                    }
+                                                    ParseMethod(method, startIndex, false);
                                                 }
                                                 else
                                                 {
-                                                    if (startIndex == indexOfField)
+                                                    ParseProperty();
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (startIndex == indexOfField)
+                                                {
+
+                                                    int ab = indexOfKeyword(parseLine.ToString().IndexOf("abstract"), "abstract");
+                                                    int ex = indexOfKeyword(parseLine.ToString().IndexOf("extern"), "extern");
+                                                    int m = Min(ab, ex);
+                                                    if ((m > 0) && (m < indexOfField))
                                                     {
-
-                                                        int ab = indexOfKeyword(parseLine.ToString().IndexOf("abstract"), "abstract");
-                                                        int ex = indexOfKeyword(parseLine.ToString().IndexOf("extern"), "extern");
-                                                        int m = Min(ab, ex);
-                                                        if ((m > 0) && (m < indexOfField))
+                                                        int method = parseLine.ToString().IndexOf(")");
+                                                        if ((method > -1) && (method < indexOfField))
                                                         {
-                                                            int method = parseLine.ToString().IndexOf(")");
-                                                            if ((method > -1) && (method < indexOfField))
-                                                            {
-                                                                ParseMethod(method, startIndex, true);
-                                                            }
-                                                            else
-                                                            {
-                                                                ParseField(startIndex);
-                                                            }
-
+                                                            ParseMethod(method, startIndex, true);
                                                         }
                                                         else
                                                         {
                                                             ParseField(startIndex);
                                                         }
+
                                                     }
                                                     else
                                                     {
-                                                        if (startIndex == indexOfClose)
+                                                        ParseField(startIndex);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (startIndex == indexOfClose)
+                                                    {
+                                                        parseLine.Remove(0, startIndex + 1);
+                                                        if (statusOfClass.Count >= statusOfNamepsace.Count)
                                                         {
-                                                            parseLine.Remove(0, startIndex + 1);
-                                                            if (statusOfClass.Count >= statusOfNamespace.Count)
+                                                            if (statusOfClass.Count != 0)
                                                             {
-                                                                if (statusOfClass.Count != 0)
-                                                                {
-                                                                    statusOfClass.RemoveAt(statusOfClass.Count - 1);
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                if (statusOfNamespace.Count != 0)
-                                                                {
-                                                                    statusOfNamespace.RemoveAt(statusOfNamespace.Count - 1);
-                                                                }
+                                                                statusOfClass.RemoveAt(statusOfClass.Count - 1);
                                                             }
                                                         }
                                                         else
                                                         {
-                                                            if (startIndex == indexOfAttribut)
+                                                            if (statusOfNamepsace.Count != 0)
                                                             {
-                                                                ParseAttribut();
+                                                                statusOfNamepsace.RemoveAt(statusOfNamepsace.Count - 1);
                                                             }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (startIndex == indexOfAttribut)
+                                                        {
+                                                            ParseAttribut();
                                                         }
                                                     }
                                                 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMCS.Classes
 {
-    public class FClass
+    class FClass
     {
         protected int cId;
         protected string cName;

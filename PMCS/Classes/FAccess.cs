@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMCS.Classes
 {
-    public class FAccess
+    class FAccess
     {
         private int aID;
         private string aName;

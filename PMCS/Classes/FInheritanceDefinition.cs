@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMCS.Classes
 {
-    public class FInheritaceDefinition
+    class FInheritaceDefinition
     {
         protected int iId;
         protected int superClass;

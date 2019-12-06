@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMCS.Classes
 {
-    public class FAttribute
+    class FAttribute
     {
         protected int aId;
         protected string aName;

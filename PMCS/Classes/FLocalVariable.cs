@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMCS.Classes
 {
-    public class FLocalVariable
+    class FLocalVariable
     {
         protected int lId;
         protected string lName;

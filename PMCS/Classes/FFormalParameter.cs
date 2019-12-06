@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMCS.Classes
 {
-    public class FFormalParameter
+    class FFormalParameter
     {
         protected int fId;
         protected string fName;

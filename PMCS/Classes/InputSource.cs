@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace PMCS.Classes
 {
-    public class InputSource
+    class InputSource
     {
         private List<FNamespace> listOfNamespaces = new List<FNamespace>();
         string sourcePath = "";
@@ -56,9 +55,6 @@ namespace PMCS.Classes
                 return sourcePath;
             }
         }
-
-        public string WhitelistRegexp { get; internal set; }
-        public string BlacklistRegexp { get; internal set; }
 
         public int GetParentClassID(string className, int indexOfNamespace, int indexOfClass)
         {
@@ -364,7 +360,7 @@ namespace PMCS.Classes
             string[] fileEntries = Directory.GetFiles(SourcePath);
             foreach (string fileName in fileEntries)
             {
-                if (IsSourceFile(fileName))
+                if ((fileName.EndsWith(".cs")) && (!Path.GetFileName(fileName).StartsWith("._")))
                 {
                     progressAction(fileName);
                     p.ReadFromFile(fileName);
@@ -378,22 +374,6 @@ namespace PMCS.Classes
                 ReadFilesOfProject(subdir, progressAction);
             }
         }
-
-        private bool IsSourceFile(string path)
-        {
-            string fileName = Path.GetFileName(path);
-            bool isValidSourceFile = fileName.EndsWith(".cs")
-                && !fileName.StartsWith("._")
-                && !fileName.Equals("AssemblyInfo.cs");
-            if(!isValidSourceFile)
-            {
-                return false;
-            }
-            bool isWhitelisted = WhitelistRegexp == null || Regex.IsMatch(path, WhitelistRegexp, RegexOptions.IgnoreCase);
-            bool isBlacklisted = BlacklistRegexp != null && Regex.IsMatch(path, BlacklistRegexp, RegexOptions.IgnoreCase);
-            return isWhitelisted && !isBlacklisted;
-        }
-
         public void ReadProject(string path, Action<string> progressAction)
         {
             p = new Parser(this); 
@@ -414,7 +394,7 @@ namespace PMCS.Classes
             string[] fileEntries = Directory.GetFiles(path);
             foreach (string fileName in fileEntries)
             {
-                if (IsSourceFile(fileName))
+                if (fileName.EndsWith(".cs") == true)
                 {
                     FileCount++;
                 }

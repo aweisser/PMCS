@@ -5,7 +5,7 @@ using System.Text;
 namespace PMCS.Classes
 {
 
-    public class FInvocation
+    class FInvocation
     {
         private int fID;
         private string fName;

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace PMCS.Classes
 {
-    public class CachingStringBuilder
+    class CachingStringBuilder
     {
         private readonly StringBuilder builder;
         private String toString;

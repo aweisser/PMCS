@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMCS.Classes
 {
-    public class FLibrary
+    class FLibrary
     {
         protected int lId;
         protected string lName;
