@@ -1,8 +1,7 @@
 {
   "profiles": {
     "PMCS.Core.CLI": {
-      "commandName": "Project",
-      "commandLineArgs": "/o:\"C:\\Users\\arminw\\Desktop\\dev\\codecity-win\\iCAS_3.7.2.1.mse\" \"C:\\Users\\arminw\\Desktop\\dev\\iCAS\\iTernityServer_AW\" /w:\".*\\\\(Dart|iAdmin|iCopy|iDiagWeb|iFSG|iTernity|StorageLayer)\\\\.*\" /b:\".*\\\\(obj|.*Test)\\\\.*\""
+      "commandName": "Project"
     }
   }
 }
