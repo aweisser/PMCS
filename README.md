@@ -1,6 +1,14 @@
-User PMCS.Core.CLI.Programm to parse existing C# code and create a .mse file.
+Use PMCS.Core.CLI.Programm to parse existing C# code and create a .mse file.
 
-You may then import the .mse file into [CodeCity](https://wettel.github.io/codecity-faq.html) to render your C# code as a Code City.
+Following command line paramaters are available:
+```
+/o:"path\to\result.mse"
+/w:"^whitelist.*csfiles.*that.*matches.*this.*regexp$" 
+/w:"^blacklist.*csfiles.*that.*matches.*this.*regexp$" 
+"path\to\csharp\project" 
+```
+
+You can then import the .mse file into [CodeCity](https://wettel.github.io/codecity-faq.html) to render your C# code as a Code City.
 
 ![Code City](https://wettel.github.io/pics/codecity_screenshot.png)
 

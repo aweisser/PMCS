@@ -5,9 +5,14 @@ VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMCS", "PMCS\PMCS.csproj", "{759EF292-E561-49EB-A53E-B6809E94031A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMCS.Core", "PMCS.Core\PMCS.Core.csproj", "{FC0F1761-5D8F-4D0B-A7DC-D8FE8D7EAC49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PMCS.Core", "PMCS.Core\PMCS.Core.csproj", "{FC0F1761-5D8F-4D0B-A7DC-D8FE8D7EAC49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMCS.Core.CLI", "PMCS.Core.CLI\PMCS.Core.CLI.csproj", "{D65AFC5D-F55E-44AD-94E2-5FED8B7ADC9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PMCS.Core.CLI", "PMCS.Core.CLI\PMCS.Core.CLI.csproj", "{D65AFC5D-F55E-44AD-94E2-5FED8B7ADC9E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5299DBAA-7F85-41AF-A49E-B8A3EB47F66F}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
